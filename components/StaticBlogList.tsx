@@ -1,3 +1,5 @@
+'use client'  // ← これを追加
+
 // components/StaticBlogList.tsx
 import { BlogArticle, FacetCounts, FacetFilters } from '@/lib/types'
 import { BlogCard } from './BlogCard'
