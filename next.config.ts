@@ -7,8 +7,6 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
-  basePath: process.env.NODE_ENV === 'production' ? '/trends-facet' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/trends-facet/' : '',
 }
 
 export default nextConfig
