@@ -28,39 +28,41 @@ export function DynamicBlogList({ initialFilters }: Props) {
     loadAndFilterBlogs()
   }, [initialFilters])
   
-  async function loadAndFilterBlogs() {
-    setLoading(true)
-    setError(null)
-    
-    try {
-      // キャッシュがなければJSON読み込み（初回のみ）
-      if (!blogsCache) {
-        console.log('📥 JSONデータ読み込み中...')
-        const response = await fetch('/data/blogs.json')
-        
-        if (!response.ok) {
-          throw new Error('データの読み込みに失敗しました')
-        }
-        
-        blogsCache = await response.json()
-        console.log(`✓ ${blogsCache!.length}件のデータを読み込みました`)
+async function loadAndFilterBlogs() {
+  setLoading(true)
+  setError(null)
+  
+  try {
+    if (!blogsCache) {
+      console.log('📥 JSONデータ読み込み中...')
+      const response = await fetch('/data/blogs.json')
+      
+      if (!response.ok) {
+        throw new Error('データの読み込みに失敗しました')
       }
       
-      // クライアントサイドでフィルタリング（超高速）
-      const filtered = filterBlogs(blogsCache, initialFilters)
-      setBlogs(filtered)
-      
-      // ファセットカウント計算
-      const counts = calculateFacetCounts(blogsCache, initialFilters)
-      setFacetCounts(counts)
-      
-    } catch (err) {
-      console.error('データ読み込みエラー:', err)
-      setError(err instanceof Error ? err.message : '不明なエラー')
-    } finally {
-      setLoading(false)
+      blogsCache = await response.json()
+      console.log(`✓ ${blogsCache!.length}件のデータを読み込みました`)
     }
+    
+    // ↓ この部分を修正
+    if (!blogsCache) {
+      throw new Error('データが読み込めませんでした')
+    }
+    
+    const filtered = filterBlogs(blogsCache, initialFilters)
+    setBlogs(filtered)
+    
+    const counts = calculateFacetCounts(blogsCache, initialFilters)
+    setFacetCounts(counts)
+    
+  } catch (err) {
+    console.error('データ読み込みエラー:', err)
+    setError(err instanceof Error ? err.message : '不明なエラー')
+  } finally {
+    setLoading(false)
   }
+}
   
   function filterBlogs(allBlogs: BlogArticle[], filters: string[]): BlogArticle[] {
     if (filters.length === 0) return allBlogs
