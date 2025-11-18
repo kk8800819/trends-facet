@@ -2,12 +2,13 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  // 静的エクスポート設定は後で追加
-  // output: 'export',
+  output: 'export',  // ← これが必要
   images: {
     unoptimized: true,
   },
-  trailingSlash: true, // これを追加
+  trailingSlash: true,
+  basePath: process.env.NODE_ENV === 'production' ? '/trends-facet' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/trends-facet/' : '',
 }
 
 export default nextConfig
